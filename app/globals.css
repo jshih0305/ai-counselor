@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --paper: #f5f0e8;
+  --paper-raised: #fbf8f3;
+  --ink: #1d2621;
+  --ink-muted: #5c6660;
+  --line: #e2d9cc;
+  --accent: #2f5d50;
+  --accent-hover: #264d42;
+  --accent-ink: #f5f0e8;
+  --accent-soft: #e3ebe5;
+  --clay: #b8683f;
+  --band: #1d2621;
+  --band-ink: #efe9df;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #121614;
+    --paper-raised: #1a201d;
+    --ink: #ece6dc;
+    --ink-muted: #9aa49e;
+    --line: #2b332f;
+    --accent: #7fb3a2;
+    --accent-hover: #96c4b4;
+    --accent-ink: #0f1412;
+    --accent-soft: #1f2c27;
+    --clay: #d8916b;
+    --band: #0b0e0d;
+    --band-ink: #ece6dc;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-clay: var(--clay);
+  --color-band: var(--band);
+  --color-band-ink: var(--band-ink);
+  --font-sans: var(--font-noto-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-noto-serif), ui-serif, Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
 }
