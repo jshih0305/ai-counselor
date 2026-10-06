@@ -21,7 +21,7 @@ type SummaryResult = {
 
 const DEFAULT_ROUNDS = 3;
 const MIN_ROUNDS = 1;
-const MAX_ROUNDS = 10;
+const MAX_ROUNDS = 6;
 const ROUND_OPTIONS = Array.from(
   { length: MAX_ROUNDS - MIN_ROUNDS + 1 },
   (_, i) => MIN_ROUNDS + i

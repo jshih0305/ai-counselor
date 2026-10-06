@@ -5,7 +5,7 @@ import { API_KEY_HEADER } from "@/lib/apiKeyHeader";
 
 const DEFAULT_ROUNDS = 3;
 const MIN_ROUNDS = 1;
-const MAX_ROUNDS = 10;
+const MAX_ROUNDS = 6;
 const MODEL = "gpt-5.4-mini";
 
 type ChatMessage = {
