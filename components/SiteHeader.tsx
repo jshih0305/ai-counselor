@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import ApiKeySettings from "@/components/ApiKeySettings";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const NAV_LINKS = [
   { href: "/#features", label: "特色" },
@@ -32,6 +33,7 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <ApiKeySettings />
           <Link
             href="/counsel"

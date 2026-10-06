@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
 import "./globals.css";
+import { THEME_STORAGE_KEY } from "@/lib/themeStorageKey";
+
+// 在畫面繪製前套用使用者儲存的主題，避免先閃一下錯誤的顏色
+const themeScript = `(function(){try{var t=localStorage.getItem(${JSON.stringify(
+  THEME_STORAGE_KEY
+)});if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
 
 const notoSans = Noto_Sans_TC({
   variable: "--font-noto-sans",
@@ -26,7 +32,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="zh-Hant"
       className={`${notoSans.variable} ${notoSerif.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>
   );

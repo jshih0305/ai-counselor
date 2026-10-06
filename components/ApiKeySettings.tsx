@@ -121,7 +121,7 @@ export default function ApiKeySettings() {
               <button
                 type="button"
                 onClick={handleClear}
-                className="rounded-full border border-line px-3 py-1.5 text-xs text-ink-muted transition-colors hover:border-red-400 hover:text-red-600 dark:hover:text-red-400"
+                className="rounded-full border border-line px-3 py-1.5 text-xs text-ink-muted transition-colors hover:border-danger hover:text-danger"
               >
                 清除
               </button>

@@ -13,10 +13,38 @@
   --clay: #b8683f;
   --band: #1d2621;
   --band-ink: #efe9df;
+  --danger: #9f2d20;
+  --danger-soft: #fbeae6;
+  --danger-line: #efc2b8;
+  color-scheme: light;
+}
+
+/*
+ * 主題：<html data-theme="light|dark"> 為使用者手動選擇；
+ * 沒有 data-theme 時跟隨系統設定（prefers-color-scheme）。
+ * 深色色票在下面兩處需保持一致。
+ */
+:root[data-theme="dark"] {
+  --paper: #121614;
+  --paper-raised: #1a201d;
+  --ink: #ece6dc;
+  --ink-muted: #9aa49e;
+  --line: #2b332f;
+  --accent: #7fb3a2;
+  --accent-hover: #96c4b4;
+  --accent-ink: #0f1412;
+  --accent-soft: #1f2c27;
+  --clay: #d8916b;
+  --band: #0b0e0d;
+  --band-ink: #ece6dc;
+  --danger: #f0a596;
+  --danger-soft: #2e1714;
+  --danger-line: #5a2a22;
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --paper: #121614;
     --paper-raised: #1a201d;
     --ink: #ece6dc;
@@ -29,6 +57,10 @@
     --clay: #d8916b;
     --band: #0b0e0d;
     --band-ink: #ece6dc;
+    --danger: #f0a596;
+    --danger-soft: #2e1714;
+    --danger-line: #5a2a22;
+    color-scheme: dark;
   }
 }
 
@@ -45,6 +77,9 @@
   --color-clay: var(--clay);
   --color-band: var(--band);
   --color-band-ink: var(--band-ink);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
   --font-sans: var(--font-noto-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-noto-serif), ui-serif, Georgia, serif;
 }

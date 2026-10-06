@@ -463,7 +463,7 @@ function SummaryCard({
 
 function ErrorBanner({ message }: { message: string }) {
   return (
-    <div className="rounded-2xl border border-red-300/60 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300">
+    <div className="rounded-2xl border border-danger-line bg-danger-soft px-4 py-3 text-sm text-danger">
       {message}
     </div>
   );
