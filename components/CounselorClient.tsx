@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Logo from "@/components/Logo";
+import { openApiKeySettings, useApiKey } from "@/lib/apiKey";
+import { API_KEY_HEADER } from "@/lib/apiKeyHeader";
 
 type ChatMessage = {
   role: "assistant" | "user";
@@ -32,7 +34,17 @@ const STARTER_PROMPTS = [
   "很在意別人的眼光，總是不敢拒絕別人",
 ];
 
+class CounselorApiError extends Error {
+  constructor(
+    message: string,
+    public code?: string
+  ) {
+    super(message);
+  }
+}
+
 export default function CounselorClient() {
+  const apiKey = useApiKey();
   const [totalRounds, setTotalRounds] = useState(DEFAULT_ROUNDS);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -51,16 +63,19 @@ export default function CounselorClient() {
     }
   }, [messages, isLoading, summary, isStarted]);
 
-  async function callCounselorApi(nextMessages: ChatMessage[]) {
+  async function callCounselorApi(nextMessages: ChatMessage[], key: string) {
     const res = await fetch("/api/counselor", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        [API_KEY_HEADER]: key,
+      },
       body: JSON.stringify({ messages: nextMessages, totalRounds }),
     });
 
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.error || "發生未知錯誤");
+      throw new CounselorApiError(data.error || "發生未知錯誤", data.code);
     }
     return data as
       | { type: "reply"; message: string; round: number }
@@ -69,6 +84,10 @@ export default function CounselorClient() {
 
   async function send() {
     if (!input.trim() || isLoading) return;
+    if (!apiKey) {
+      openApiKeySettings();
+      return;
+    }
     const nextMessages: ChatMessage[] = [
       ...messages,
       { role: "user", content: input.trim() },
@@ -78,7 +97,7 @@ export default function CounselorClient() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await callCounselorApi(nextMessages);
+      const data = await callCounselorApi(nextMessages, apiKey);
       if (data.type === "reply") {
         setMessages([
           ...nextMessages,
@@ -92,6 +111,12 @@ export default function CounselorClient() {
       setMessages(messages);
       setInput(nextMessages[nextMessages.length - 1].content);
       setError(e instanceof Error ? e.message : "發生未知錯誤");
+      if (
+        e instanceof CounselorApiError &&
+        (e.code === "missing_api_key" || e.code === "invalid_api_key")
+      ) {
+        openApiKeySettings();
+      }
     } finally {
       setIsLoading(false);
     }
@@ -129,6 +154,26 @@ export default function CounselorClient() {
               用你自己的話說說最近的困擾，不需要整理得很完整。諮詢師會先承接你的感受，再陪你找出卡住的地方。
             </p>
           </div>
+
+          {!apiKey && (
+            <div className="flex flex-col gap-3 rounded-2xl border border-clay/40 bg-paper-raised px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-ink">
+                  開始之前，請先設定你的 OpenAI API Key
+                </span>
+                <span className="text-xs leading-relaxed text-ink-muted">
+                  金鑰只會儲存在你的瀏覽器中，諮詢時才會隨請求傳送。
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={openApiKeySettings}
+                className="shrink-0 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-ink transition-colors hover:bg-accent-hover"
+              >
+                設定 API Key
+              </button>
+            </div>
+          )}
 
           {error && <ErrorBanner message={error} />}
 

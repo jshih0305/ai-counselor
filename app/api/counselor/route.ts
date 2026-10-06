@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { openai } from "@/lib/openai";
+import OpenAI from "openai";
+import { createOpenAI } from "@/lib/openai";
+import { API_KEY_HEADER } from "@/lib/apiKeyHeader";
 
 const DEFAULT_ROUNDS = 3;
 const MIN_ROUNDS = 1;
@@ -28,12 +30,14 @@ const SAFETY_RULES = `安全原則（最優先）：
 - 你是 AI，不能取代專業心理師或精神科醫師；不要做任何醫療診斷或建議用藥。`;
 
 export async function POST(request: Request) {
-  if (!process.env.OPENAI_API_KEY) {
+  const apiKey = request.headers.get(API_KEY_HEADER)?.trim();
+  if (!apiKey) {
     return NextResponse.json(
-      { error: "伺服器未設定 OPENAI_API_KEY" },
-      { status: 500 }
+      { error: "請先在設定中輸入你的 OpenAI API Key", code: "missing_api_key" },
+      { status: 401 }
     );
   }
+  const openai = createOpenAI(apiKey);
 
   let body: { messages?: ChatMessage[]; totalRounds?: number };
   try {
@@ -68,12 +72,12 @@ export async function POST(request: Request) {
 
   try {
     if (respondedRounds >= totalRounds) {
-      const result = await generateSummary(messages, totalRounds);
+      const result = await generateSummary(openai, messages, totalRounds);
       return NextResponse.json({ type: "summary", result });
     }
 
     const round = respondedRounds + 1;
-    const reply = await generateReply(messages, round, totalRounds);
+    const reply = await generateReply(openai, messages, round, totalRounds);
     return NextResponse.json({
       type: "reply",
       message: reply,
@@ -81,7 +85,27 @@ export async function POST(request: Request) {
       totalRounds,
     });
   } catch (error) {
-    console.error("Counselor API error:", error);
+    if (error instanceof OpenAI.APIError) {
+      // OpenAI 的錯誤訊息會夾帶部分金鑰，只記錄狀態碼與錯誤代碼
+      console.error("Counselor API error:", error.status, error.code ?? error.type);
+      if (error.status === 401) {
+        return NextResponse.json(
+          {
+            error: "OpenAI API Key 無效，請到設定中確認後重新輸入",
+            code: "invalid_api_key",
+          },
+          { status: 401 }
+        );
+      }
+      if (error.status === 429) {
+        return NextResponse.json(
+          { error: "OpenAI 帳戶額度不足或請求過於頻繁，請稍後再試" },
+          { status: 429 }
+        );
+      }
+    } else {
+      console.error("Counselor API error:", error);
+    }
     return NextResponse.json(
       { error: "呼叫 OpenAI API 時發生錯誤" },
       { status: 500 }
@@ -103,6 +127,7 @@ function roundFocus(round: number, totalRounds: number) {
 }
 
 async function generateReply(
+  openai: OpenAI,
   messages: ChatMessage[],
   round: number,
   totalRounds: number
@@ -147,6 +172,7 @@ ${SAFETY_RULES}`;
 }
 
 async function generateSummary(
+  openai: OpenAI,
   messages: ChatMessage[],
   totalRounds: number
 ): Promise<SummaryResult> {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import ApiKeySettings from "@/components/ApiKeySettings";
 
 const NAV_LINKS = [
   { href: "/#features", label: "特色" },
@@ -30,12 +31,15 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        <Link
-          href="/counsel"
-          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-ink transition-colors hover:bg-accent-hover"
-        >
-          開始諮詢
-        </Link>
+        <div className="flex items-center gap-2">
+          <ApiKeySettings />
+          <Link
+            href="/counsel"
+            className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-ink transition-colors hover:bg-accent-hover"
+          >
+            開始諮詢
+          </Link>
+        </div>
       </div>
     </header>
   );

@@ -49,6 +49,10 @@ const FAQS = [
     a: "不行。心嶼是幫助你整理想法、自我覺察的工具，無法提供診斷或治療。如果困擾持續影響生活，建議尋求專業心理師或精神科醫師協助。",
   },
   {
+    q: "為什麼需要我自己的 OpenAI API Key？",
+    a: "心嶼採用 BYOK（自帶金鑰）模式：用你自己的 OpenAI API Key 呼叫模型，費用直接由你的 OpenAI 帳戶支付。金鑰只儲存在你的瀏覽器中，每次諮詢時隨請求轉送給 OpenAI，伺服器不會保存。",
+  },
+  {
     q: "我的對話內容會被保存嗎？",
     a: "目前對話只存在你的瀏覽器頁面中，重新整理或按下「重新開始」就會清除。對話內容會傳送給 OpenAI 的模型以產生回應。",
   },
@@ -93,7 +97,7 @@ export default function Home() {
                   href="/counsel"
                   className="group inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition-colors hover:bg-accent-hover"
                 >
-                  免費開始諮詢
+                  立即開始諮詢
                   <span className="transition-transform group-hover:translate-x-0.5">
                     →
                   </span>
@@ -106,7 +110,7 @@ export default function Home() {
                 </Link>
               </div>
               <p className="text-xs text-ink-muted">
-                不需註冊・對話不留存於伺服器
+                不需註冊・使用你自己的 OpenAI API Key・對話不留存於伺服器
               </p>
             </div>
 
